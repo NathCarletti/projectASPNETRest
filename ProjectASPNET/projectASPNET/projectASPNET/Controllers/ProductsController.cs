@@ -18,18 +18,21 @@ namespace projectASPNET.Controllers
         private projectASPNETContext db = new projectASPNETContext();
 
         // GET: api/Products
+       // [Authorize(Roles ="ADMIN")]
         public IQueryable<Product> GetProducts()
         {
             Trace.TraceInformation("Nome do usuário: " + User.Identity.Name);
             if (User.IsInRole("USER"))
             {
                 Trace.TraceInformation("Usuário com papel USER");
+                return db.Products;
             }
             else if (User.IsInRole("ADMIN"))
             {
                 Trace.TraceInformation("Usuário com papel ADMIN");
+                return db.Products;
             }
-            return db.Products;
+            else return null;
         }
         /* public IQueryable<Product> GetProducts()
          {
@@ -45,11 +48,22 @@ namespace projectASPNET.Controllers
             {
                 return NotFound();
             }
-
-            return Ok(product);
+            Trace.TraceInformation("Nome do usuário: " + User.Identity.Name);
+            if (User.IsInRole("USER"))
+            {
+                Trace.TraceInformation("Usuário com papel USER");
+                return Ok(product);
+            }
+            else if (User.IsInRole("ADMIN"))
+            {
+                Trace.TraceInformation("Usuário com papel ADMIN");
+                return Ok(product);
+            }
+            else return null;
         }
 
         // PUT: api/Products/5
+        [Authorize(Roles = "ADMIN")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutProduct(int id, Product product)
         {
@@ -85,6 +99,7 @@ namespace projectASPNET.Controllers
         }
 
         // POST: api/Products
+        [Authorize(Roles = "ADMIN")]
         [ResponseType(typeof(Product))]
         public IHttpActionResult PostProduct(Product product)
         {
@@ -100,6 +115,7 @@ namespace projectASPNET.Controllers
         }
 
         // DELETE: api/Products/5
+        [Authorize(Roles = "ADMIN")]
         [ResponseType(typeof(Product))]
         public IHttpActionResult DeleteProduct(int id)
         {
